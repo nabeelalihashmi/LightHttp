@@ -3,7 +3,7 @@
 namespace IconicCodes\LightHttp;
 
 class LSession {
-  private static function euse_secure_handler() {
+  private static function register_secure_handler() {
     session_set_save_handler(new LSecureSessionHandler());
   }
 
