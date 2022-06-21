@@ -1,39 +1,46 @@
 <?php
 
 namespace IconicCodes\LightHttp;
+use IconicCodes\LightHttp\LHttpHelper;
+use IconicCodes\LightHttp\LSecureSessionHandler;
 
 class LSession {
-  private static function register_secure_handler() {
+
+  public static function register_secure_handler() {
     session_set_save_handler(new LSecureSessionHandler());
   }
 
-  public static function __callStatic($name, $arguments) {
+  public static function pre() {
     if (session_status() == PHP_SESSION_NONE) {
-        session_start();
+      session_start();
     }
-    return call_user_func_array([self::class, 'e' . $name], $arguments);
   }
 
-  private static function eexists($name) {
+  public static function exists($name) {
+    self::pre();
     return (isset($_SESSION[$name])) ? true : false;
   }
 
-  private static function eget($name) {
+  public static function get($name) {
+    self::pre();
     if (!self::exists($name)) return NULL;
     return is_array($_SESSION[$name]) ?  LHttpHelper::arrayToObject($_SESSION[$name]) :  $_SESSION[$name];
   }
 
-  private static function eset($name, $value) {
+  public static function set($name, $value) {
+    self::pre();
     return $_SESSION[$name] = $value;
   }
 
-  private static function edelete($name) {
+  public static function delete($name) {
+    self::pre();
     if (self::exists($name)) {
       unset($_SESSION[$name]);
     }
   }
 
-  private static function euagent($no_version = true) {
+  public static function uagent($no_version = true) {
+    self::pre();
     $uagent = $_SERVER['HTTP_USER_AGENT'];
     if ($no_version) {
       $regx = '/\/[a-zA-Z0-9.]+/';
