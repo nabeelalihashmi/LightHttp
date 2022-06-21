@@ -12,12 +12,13 @@ class LRequest {
     public $primary_request;
     public $files = [];
     public $input;
-    
+
 
     public function __construct() {
         $this->server = (object) $_SERVER;
         $this->method =  $_POST["_method"] ?? $_SERVER['REQUEST_METHOD'];
         $this->input =  (object) ["raw" => file_get_contents("php://input"), "object" => json_decode(file_get_contents("php://input"))];
+        $this->ip = self::getIp();
         $this->request =  [
             "request" => [],
             "post" => [],
@@ -28,32 +29,32 @@ class LRequest {
             "head" => []
         ];
 
-        foreach($this->request as $k => $v) {
-                $k = (in_array($k, ["put", "delete", "patch"])) ? "post" : $k;
-                $k = (in_array($k, ["head"])) ? "get" : $k;
-                switch ($k) {
-                    case 'get':
-                        $this->request[$k] = LHttpHelper::arrayToObject($_GET);
+        foreach ($this->request as $k => $v) {
+            $k = (in_array($k, ["put", "delete", "patch"])) ? "post" : $k;
+            $k = (in_array($k, ["head"])) ? "get" : $k;
+            switch ($k) {
+                case 'get':
+                    $this->request[$k] = LHttpHelper::arrayToObject($_GET);
                     break;
-                    
-                    case 'post':
-                        $this->request[$k] = LHttpHelper::arrayToObject($_POST);
+
+                case 'post':
+                    $this->request[$k] = LHttpHelper::arrayToObject($_POST);
                     break;
-                    
-                    case 'request':
-                        $this->request[$k] = LHttpHelper::arrayToObject($_REQUEST);
+
+                case 'request':
+                    $this->request[$k] = LHttpHelper::arrayToObject($_REQUEST);
                     break;
-                }
+            }
         }
 
         $this->request = (object) $this->request;
-        
-        
+
+
         $finfo = @new finfo(FILEINFO_MIME);
-        foreach($_FILES as $file => $data) {
-            
+        foreach ($_FILES as $file => $data) {
+
             $file_ = new LFile();
-            foreach($data as $key => $val) {
+            foreach ($data as $key => $val) {
                 $file_->$key = $val;
             }
             $info = @$finfo->file($data['tmp_name']);
@@ -63,12 +64,12 @@ class LRequest {
             $file_->encoding  = @$info[1];
 
             $file_->expected_mimes = [];
-            $this->files[$file] = $file_; 
+            $this->files[$file] = $file_;
         }
-        
+
         $this->files = (object) $this->files;
-        
-        $_method = strtolower($this->method); 
+
+        $_method = strtolower($this->method);
         if (in_array($_method, ["put", "patch", "delete"])) {
             $this->request->$_method = $this->request->post;
             $_method = "post";
@@ -76,12 +77,27 @@ class LRequest {
             $this->request->$_method = $this->request->post;
             $_method = "get";
         }
-        
+
 
         $this->primary_request = $this->request->$_method;
     }
 
     private function arrayToObject($array = []) {
         return json_decode(json_encode($array));
+    }
+
+    public static function getIp() {
+        $ip_address = 'UNKNOWN';
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip_address = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        else {
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+        }
+
+        return $ip_address;
     }
 }
