@@ -4,8 +4,8 @@ namespace IconicCodes\LightHttp\LResponse;
 use IconicCodes\LightHttp\Interfaces\IResponse;
 
 class LRedirectReponse implements IResponse {
-    public $url;
-    public $code;
+    private $__url;
+    private $__code;
     function __construct($url, $code = 301) {
         $this->__url = $url;
         $this->__code = $code;

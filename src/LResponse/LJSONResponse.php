@@ -4,9 +4,9 @@ namespace IconicCodes\LightHttp\LResponse;
 use IconicCodes\LightHttp\Interfaces\IResponse;
 
 class LJSONResponse implements IResponse {
-    public $data;
-    public $status = 200;
-    public $headers = [];
+    private $__data;
+    private $__status = 200;
+    private $__headers = [];
 
     public function __construct($data = null, $status = 200, $headers = []) {
         $this->__data = $data;

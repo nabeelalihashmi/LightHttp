@@ -5,9 +5,9 @@ use IconicCodes\LightHttp\Interfaces\IResponse;
 
 
 class LStandarResponse implements IResponse {
-    public $data;
-    public $headers = [];
-    public $status = 200;
+    private $__data;
+    private $__headers = [];
+    private $__status = 200;
 
     public function __construct($data = null, $status = 200, $headers = []) {
         $this->__data = $data;
