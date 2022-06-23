@@ -12,6 +12,7 @@ class LRequest {
     public $primary_request;
     public $files = [];
     public $input;
+    public $ip;
 
 
     public function __construct() {
@@ -34,15 +35,15 @@ class LRequest {
             $k = (in_array($k, ["head"])) ? "get" : $k;
             switch ($k) {
                 case 'get':
-                    $this->request[$k] = LHttpHelper::arrayToObject($_GET);
+                    $this->request[$k] = $this->arrayToObject($_GET);
                     break;
 
                 case 'post':
-                    $this->request[$k] = LHttpHelper::arrayToObject($_POST);
+                    $this->request[$k] = $this->arrayToObject($_POST);
                     break;
 
                 case 'request':
-                    $this->request[$k] = LHttpHelper::arrayToObject($_REQUEST);
+                    $this->request[$k] = $this->arrayToObject($_REQUEST);
                     break;
             }
         }
@@ -51,18 +52,8 @@ class LRequest {
 
 
         $finfo = @new finfo(FILEINFO_MIME);
-        foreach ($_FILES as $file => $data) {
-
-            $file_ = new LFile();
-            foreach ($data as $key => $val) {
-                $file_->$key = $val;
-            }
-            $info = @$finfo->file($data['tmp_name']);
-            $info = explode("; charset=", $info);
-
-            $file_->mime  = @$info[0];
-            $file_->encoding  = @$info[1];
-
+        foreach ($_FILES as $file) {
+            $file_ = new LFile($file);
             $file_->expected_mimes = [];
             $this->files[$file] = $file_;
         }

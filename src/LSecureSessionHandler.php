@@ -39,6 +39,7 @@ class LSecureSessionHandler extends SessionHandler
      * @param string $session_name
      * @return bool
      */
+    #[\ReturnTypeWillChange] 
     public function open($save_path, $session_name)
     {
         $this->key = $this->getKey('KEY_' . $session_name);
@@ -50,6 +51,7 @@ class LSecureSessionHandler extends SessionHandler
      *
      * @param string $id
      */
+    #[\ReturnTypeWillChange] 
     public function read($id)
     {
         $data = parent::read($id);
@@ -62,6 +64,7 @@ class LSecureSessionHandler extends SessionHandler
      * @param string $id
      * @param string $data
      */
+    #[\ReturnTypeWillChange] 
     public function write($id, $data)
     {
         return parent::write($id, $this->encrypt($data, $this->key));
