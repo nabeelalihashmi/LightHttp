@@ -15,7 +15,7 @@ class LJSONResponse implements IResponse {
     }
 
  
-    public function handle() {
+    public function send() {
         http_response_code($this->__status);
         header('Content-Type: application/json');
         foreach ($this->__headers as $key => $value) {

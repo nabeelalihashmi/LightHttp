@@ -15,7 +15,7 @@ class LStandarResponse implements IResponse {
         $this->__headers = $headers;
     }
 
-    public function handle() {
+    public function send() {
         http_response_code($this->__status);
         foreach ($this->__headers as $key => $value) {
             header($key . ': ' . $value);

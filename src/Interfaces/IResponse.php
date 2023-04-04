@@ -12,6 +12,6 @@
 namespace IconicCodes\LightHttp\Interfaces;
 
 interface IResponse {
-    public function handle();
+    public function send();
 }
 

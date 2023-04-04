@@ -10,6 +10,19 @@ class LSession {
     session_set_save_handler(new LSecureSessionHandler());
   }
 
+  public static function flash($key, $val = null) {
+    self::pre();
+    if ($val === null) {
+      $val = $_SESSION[$key] ?? null;
+      if (isset($_SESSION[$key])) {
+        unset($_SESSION[$key]);
+      }
+      return $val;
+    } else {
+      $_SESSION[$key] = $val;
+    }
+  }
+
   public static function pre() {
     if (session_status() == PHP_SESSION_NONE) {
       session_start();

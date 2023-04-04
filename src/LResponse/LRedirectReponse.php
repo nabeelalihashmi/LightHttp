@@ -11,7 +11,7 @@ class LRedirectReponse implements IResponse {
         $this->__code = $code;
     }
 
-    public function handle() {
+    public function send() {
         if (!headers_sent()) {
             header("Location: $this->__url", true, $this->__code);
         } else {
